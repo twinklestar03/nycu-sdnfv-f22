@@ -1,0 +1,83 @@
+version: '3'
+services:
+  h1:
+    image: host
+    container_name: h1
+    privileged: true
+    build:
+      context: .
+      dockerfile: host.Dockerfile
+    cap_add:
+      - NET_ADMIN
+      - NET_BROADCAST
+    # networks:
+    #   R1h1br:
+    #     ipv4_address: 172.18.0.3
+    entrypoint: ["/bin/sh","-c"]
+    command:
+    - |
+      ip route del default 
+      ip route add default via 172.18.0.2
+      sleep infinity
+  h2:
+    image: host
+    container_name: h2
+    privileged: true
+    build:
+      context: .
+      dockerfile: host.Dockerfile
+    cap_add:
+      - NET_ADMIN
+      - NET_BROADCAST
+    # networks:
+    #   R2h2br:
+    #     ipv4_address: 172.19.0.3
+    entrypoint: ["/bin/sh","-c"]
+    command:
+    - |
+      ip route del default 
+      ip route add default via 172.19.0.2
+      sleep infinity
+  R1:
+    image: opencord/quagga
+    container_name: R1
+    privileged: true
+    sysctls:
+      - net.ipv4.ip_forward=1
+    cap_add:
+      - NET_ADMIN
+      - NET_BROADCAST
+    networks:
+      R1R2br:
+        ipv4_address: 172.20.0.2
+    volumes:
+      - ./config/R1/zebra.conf:/etc/quagga/zebra.conf
+      - ./config/R1/bgpd.conf:/etc/quagga/bgpd.conf
+  R2:
+    image: opencord/quagga
+    container_name: R2
+    privileged: true
+    sysctls:
+      - net.ipv4.ip_forward=1
+    cap_add:
+      - NET_ADMIN
+      - NET_BROADCAST
+    networks:
+      R1R2br:
+        ipv4_address: 172.20.0.3
+    volumes:
+      - ./config/R2/zebra.conf:/etc/quagga/zebra.conf
+      - ./config/R2/bgpd.conf:/etc/quagga/bgpd.conf
+
+networks:
+  R1R2br:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+  default:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.30.0.0/16

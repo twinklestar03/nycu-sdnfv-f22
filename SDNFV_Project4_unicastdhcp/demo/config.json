@@ -1,0 +1,9 @@
+{
+  "apps": {
+    "nctu.winlab.echoconfig": {
+      "whoami": {
+        "name": "Magikarp"
+      }
+    }
+  }
+}

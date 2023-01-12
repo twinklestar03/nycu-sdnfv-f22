@@ -1,0 +1,71 @@
+{
+    "ports": {
+       "of:0000000000000002/4": {
+            "interfaces": [
+                {
+                    "name": "intf1",
+                    "ips": [
+                        "10.96.1.1/24"
+                    ]
+                }
+            ]
+        },
+        "of:0000000000000002/5": {
+            "interfaces": [
+                {
+                    "name": "intf2",
+                    "ips": [
+                        "10.34.6.1/24"
+                    ]
+                }
+            ]
+        },
+	    "of:0000000000000001/4": {
+            "interfaces": [
+                {
+                    "name": "intf3",
+                    "ips": [
+                        "10.28.3.1/24"
+                    ]
+                }
+            ]
+        },
+	    "of:0000000000000003/2": {
+            "interfaces": [
+                {
+                    "name": "intf4",
+                    "ips": [
+                        "10.76.5.1/24"
+                    ]
+                }
+            ]
+        }
+    },
+    "apps": {
+        "nycu.sdnfv.vrouter": {
+            "router": {
+                "quagga": "of:0000000000000001/3",
+                "quagga-mac": "ce:bd:75:bf:38:25",
+                "virtual-ip": "172.30.0.254",
+                "virtual-mac": "00:00:00:00:00:01",
+                "peers": [
+                    "10.28.3.2",
+                    "10.76.5.2",
+                    "10.96.1.2",
+                    "10.34.6.2"
+                ]
+            }
+        },
+        "nycu.sdnfv.proxyarp": {
+            "ProxyArpConfig": {
+                "virtual-ip": "172.30.0.254",
+                "virtual-mac": "00:00:00:00:00:01"
+            }
+        },
+        "nycu.sdnfv.unicastdhcp": {
+            "UnicastDhcpConfig": {
+                "serverLocation": "of:0000000000000001/5"
+            }
+        }
+    }
+}
